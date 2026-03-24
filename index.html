@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro Calculator | Coach Anis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold2: #E8C97A;
+  --dark: #080808;
+  --dark2: #0F0F0F;
+  --dark3: #161616;
+  --dark4: #1E1E1E;
+  --text: #EFEFEF;
+  --dim: #777;
+  --border: rgba(201,168,76,0.18);
+  --protein: #E8C97A;
+  --carb: #7AB8E8;
+  --fat: #E87A7A;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:999; opacity:.4;
+}
+
+/* ─── HEADER ─── */
+.header {
+  text-align: center;
+  padding: 48px 24px 32px;
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, transparent, var(--gold));
+}
+
+.header-tag {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 5px;
+  font-size: 11px;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 14px;
+}
+
+.header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 8vw, 64px);
+  letter-spacing: 2px;
+  line-height: 0.95;
+  margin-bottom: 10px;
+}
+
+.header h1 span { color: var(--gold); }
+
+.header p {
+  font-size: 13px;
+  color: var(--dim);
+  max-width: 360px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ─── MAIN CARD ─── */
+.main {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  margin-bottom: 16px;
+}
+
+/* ─── STEPS ─── */
+.step-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.step-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ─── GENDER TOGGLE ─── */
+.gender-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.gender-btn {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  font-family: 'Cairo', sans-serif;
+  color: var(--dim);
+}
+
+.gender-btn:hover { border-color: var(--gold); color: var(--text); }
+
+.gender-btn.active {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.08);
+  color: var(--gold);
+}
+
+.gender-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+.gender-label { font-size: 13px; font-weight: 700; display: block; }
+.gender-en { font-size: 10px; letter-spacing: 2px; font-family: 'Bebas Neue', sans-serif; opacity: 0.5; }
+
+/* ─── INPUTS ─── */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 12px;
+  color: var(--dim);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+label span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+input[type="number"] {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.04);
+}
+
+/* ─── ACTIVITY ─── */
+.activity-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.activity-btn {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  font-family: 'Cairo', sans-serif;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.activity-btn:hover { border-color: var(--gold); color: var(--text); }
+
+.activity-btn.active {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.06);
+  color: var(--text);
+}
+
+.activity-btn.active .act-dot {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201,168,76,0.5);
+}
+
+.act-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--dim);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.act-name { font-weight: 700; }
+.act-desc { font-size: 11px; color: var(--dim); margin-top: 1px; }
+
+/* ─── GOAL ─── */
+.goal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.goal-btn {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 14px 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: 'Cairo', sans-serif;
+  color: var(--dim);
+}
+
+.goal-btn:hover { border-color: var(--gold); color: var(--text); }
+.goal-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.07); color: var(--gold); }
+
+.goal-icon { font-size: 22px; display: block; margin-bottom: 8px; }
+.goal-name { font-size: 13px; font-weight: 700; display: block; }
+.goal-en { font-size: 9px; letter-spacing: 2px; font-family: 'Bebas Neue', sans-serif; opacity: 0.5; margin-top: 3px; display: block; }
+
+/* ─── CALCULATE BTN ─── */
+.btn-calc {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--dark);
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.btn-calc:hover {
+  box-shadow: 0 10px 32px rgba(201,168,76,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-calc:active { transform: translateY(0); }
+
+/* ─── RESULTS ─── */
+.results {
+  display: none;
+  animation: rise 0.4s ease;
+}
+
+@keyframes rise {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.results-header .tag {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 4px;
+  font-size: 11px;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.results-header h2 {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+/* TDEE BIG NUMBER */
+.tdee-box {
+  background: linear-gradient(135deg, #0F0E08, #1A1608);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tdee-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.tdee-label {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 4px;
+  font-size: 11px;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+
+.tdee-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  color: var(--gold2);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.tdee-unit {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.tdee-goal-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--dim);
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  padding: 8px 14px;
+  display: inline-block;
+}
+
+/* MACRO BARS */
+.macro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.macro-card {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.macro-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.macro-card.protein::before { background: var(--protein); }
+.macro-card.carb::before { background: var(--carb); }
+.macro-card.fat::before { background: var(--fat); }
+
+.macro-icon { font-size: 20px; margin-bottom: 8px; display: block; }
+
+.macro-grams {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.macro-card.protein .macro-grams { color: var(--protein); }
+.macro-card.carb .macro-grams { color: var(--carb); }
+.macro-card.fat .macro-grams { color: var(--fat); }
+
+.macro-unit { font-size: 11px; color: var(--dim); }
+.macro-name { font-size: 13px; font-weight: 700; margin-top: 8px; }
+.macro-en { font-size: 9px; letter-spacing: 2px; font-family: 'Bebas Neue', sans-serif; color: var(--dim); opacity: 0.6; }
+.macro-kcal { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+/* DONUT CHART */
+.chart-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+canvas#donutChart {
+  width: 110px !important;
+  height: 110px !important;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name { font-weight: 700; }
+.legend-pct { color: var(--dim); font-size: 12px; margin-right: 4px; }
+
+/* MEAL SPLIT */
+.meals-card {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.meals-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meals-title span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+.meal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px;
+}
+
+.meal-row:last-child { border-bottom: none; }
+.meal-name { color: var(--dim); }
+.meal-macros { display: flex; gap: 14px; font-weight: 700; }
+.meal-p { color: var(--protein); }
+.meal-c { color: var(--carb); }
+.meal-f { color: var(--fat); }
+
+/* CTA */
+.cta-box {
+  background: linear-gradient(135deg, #0F0E08, #1A1608);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.cta-box p {
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.cta-box strong { color: var(--text); }
+
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--dark);
+  padding: 13px 28px;
+  border-radius: 8px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-wa:hover {
+  box-shadow: 0 8px 24px rgba(201,168,76,0.35);
+  transform: translateY(-2px);
+}
+
+.btn-reset {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover { border-color: var(--gold); color: var(--text); }
+
+/* footer */
+footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 1px;
+  border-top: 1px solid var(--border);
+}
+
+footer span { color: var(--gold); }
+
+@media (max-width: 400px) {
+  .macro-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .macro-grams { font-size: 28px; }
+  .input-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">NUTRITION CALCULATOR · حاسبة التغذية</div>
+  <h1>MACRO<br><span>CALCULATOR</span></h1>
+  <p>احسب سعراتك وماكروك اليومي بدقة علمية<br>
+  <span style="font-family:'Bebas Neue';letter-spacing:2px;font-size:11px;opacity:0.5;">BY COACH ANIS</span></p>
+</div>
+
+<div class="main">
+
+  <!-- FORM CARD -->
+  <div class="card" id="formCard">
+
+    <!-- GENDER -->
+    <div class="step-label">STEP 01 · الخطوة الأولى</div>
+    <div class="step-title">الجنس · Gender</div>
+    <div class="gender-toggle">
+      <button class="gender-btn active" id="btnMale" onclick="setGender('male')">
+        <span class="gender-icon">♂</span>
+        <span class="gender-label">ذكر</span>
+        <span class="gender-en">MALE</span>
+      </button>
+      <button class="gender-btn" id="btnFemale" onclick="setGender('female')">
+        <span class="gender-icon">♀</span>
+        <span class="gender-label">أنثى</span>
+        <span class="gender-en">FEMALE</span>
+      </button>
+    </div>
+
+    <!-- MEASUREMENTS -->
+    <div class="step-label">STEP 02 · الخطوة الثانية</div>
+    <div class="step-title">القياسات · Measurements</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>العمر <span>AGE</span></label>
+        <input type="number" id="age" placeholder="25" min="15" max="80">
+      </div>
+      <div class="input-group">
+        <label>الوزن كغ <span>WEIGHT</span></label>
+        <input type="number" id="weight" placeholder="75" min="30" max="250">
+      </div>
+      <div class="input-group">
+        <label>الطول سم <span>HEIGHT</span></label>
+        <input type="number" id="height" placeholder="175" min="100" max="230">
+      </div>
+      <div class="input-group">
+        <label>دهون الجسم % <span>BODY FAT</span></label>
+        <input type="number" id="bf" placeholder="20" min="5" max="50">
+        <span style="font-size:10px;color:var(--dim);">اختياري · optional</span>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="step-label" style="margin-top:20px;">STEP 03 · الخطوة الثالثة</div>
+    <div class="step-title">مستوى النشاط · Activity Level</div>
+    <div class="activity-options">
+      <button class="activity-btn" data-val="1.2" onclick="setActivity(this)">
+        <div><div class="act-name">خامل · Sedentary</div><div class="act-desc">لا تمرين أو تمرين نادر جداً</div></div>
+        <div class="act-dot"></div>
+      </button>
+      <button class="activity-btn" data-val="1.375" onclick="setActivity(this)">
+        <div><div class="act-name">خفيف · Lightly Active</div><div class="act-desc">1-3 أيام تمرين في الأسبوع</div></div>
+        <div class="act-dot"></div>
+      </button>
+      <button class="activity-btn active" data-val="1.55" onclick="setActivity(this)">
+        <div><div class="act-name">متوسط · Moderately Active</div><div class="act-desc">3-5 أيام تمرين في الأسبوع</div></div>
+        <div class="act-dot"></div>
+      </button>
+      <button class="activity-btn" data-val="1.725" onclick="setActivity(this)">
+        <div><div class="act-name">نشيط · Very Active</div><div class="act-desc">6-7 أيام تمرين مكثف</div></div>
+        <div class="act-dot"></div>
+      </button>
+      <button class="activity-btn" data-val="1.9" onclick="setActivity(this)">
+        <div><div class="act-name">رياضي احترافي · Athlete</div><div class="act-desc">تمرين مكثف مرتين يومياً</div></div>
+        <div class="act-dot"></div>
+      </button>
+    </div>
+
+    <!-- GOAL -->
+    <div class="step-label" style="margin-top:20px;">STEP 04 · الخطوة الرابعة</div>
+    <div class="step-title">الهدف · Goal</div>
+    <div class="goal-grid">
+      <button class="goal-btn" data-goal="cut" onclick="setGoal(this)">
+        <span class="goal-icon">🔥</span>
+        <span class="goal-name">تنشيف</span>
+        <span class="goal-en">CUT</span>
+      </button>
+      <button class="goal-btn active" data-goal="maintain" onclick="setGoal(this)">
+        <span class="goal-icon">⚖️</span>
+        <span class="goal-name">ثبات</span>
+        <span class="goal-en">MAINTAIN</span>
+      </button>
+      <button class="goal-btn" data-goal="bulk" onclick="setGoal(this)">
+        <span class="goal-icon">💪</span>
+        <span class="goal-name">تضخم</span>
+        <span class="goal-en">BULK</span>
+      </button>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">احسب الماكرو · Calculate</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="resultsSection">
+
+    <div class="results-header">
+      <div class="tag">YOUR RESULTS · نتائجك</div>
+      <h2>خطتك الغذائية اليومية</h2>
+    </div>
+
+    <!-- TDEE -->
+    <div class="tdee-box">
+      <div class="tdee-label">TOTAL DAILY CALORIES · السعرات اليومية</div>
+      <div class="tdee-num" id="tdeeNum">0</div>
+      <div class="tdee-unit">سعرة حرارية · kcal/day</div>
+      <div class="tdee-goal-note" id="goalNote"></div>
+    </div>
+
+    <!-- MACROS -->
+    <div class="macro-grid">
+      <div class="macro-card protein">
+        <span class="macro-icon">🥩</span>
+        <div class="macro-grams" id="proteinG">0</div>
+        <div class="macro-unit">غرام · g</div>
+        <div class="macro-name">بروتين</div>
+        <div class="macro-en">PROTEIN</div>
+        <div class="macro-kcal" id="proteinKcal"></div>
+      </div>
+      <div class="macro-card carb">
+        <span class="macro-icon">🍚</span>
+        <div class="macro-grams" id="carbG">0</div>
+        <div class="macro-unit">غرام · g</div>
+        <div class="macro-name">كاربوهيدرات</div>
+        <div class="macro-en">CARBS</div>
+        <div class="macro-kcal" id="carbKcal"></div>
+      </div>
+      <div class="macro-card fat">
+        <span class="macro-icon">🥑</span>
+        <div class="macro-grams" id="fatG">0</div>
+        <div class="macro-unit">غرام · g</div>
+        <div class="macro-name">دهون</div>
+        <div class="macro-en">FATS</div>
+        <div class="macro-kcal" id="fatKcal"></div>
+      </div>
+    </div>
+
+    <!-- DONUT -->
+    <div class="chart-wrap">
+      <canvas id="donutChart" width="110" height="110"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#E8C97A"></div>
+          <div>
+            <span class="legend-name">بروتين</span>
+            <span class="legend-pct" id="pctProtein"></span>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#7AB8E8"></div>
+          <div>
+            <span class="legend-name">كاربوهيدرات</span>
+            <span class="legend-pct" id="pctCarb"></span>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#E87A7A"></div>
+          <div>
+            <span class="legend-name">دهون</span>
+            <span class="legend-pct" id="pctFat"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEAL SPLIT -->
+    <div class="meals-card">
+      <div class="meals-title">توزيع الوجبات (3 وجبات) <span>MEAL SPLIT</span></div>
+      <div id="mealRows"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <p>هذه الأرقام تقديرية — للحصول على <strong>خطة مخصصة 100%</strong> مع متابعة أسبوعية، تابعني على الإنستغرام @coach__anis مباشرة</p>
+      <a class="btn-wa" href="https://instagram.com/coach__anis" target="_blank">
+        📸 تابعني على الإنستغرام
+      </a>
+    </div>
+
+    <button class="btn-reset" onclick="resetCalc()">🔄 حساب جديد · Recalculate</button>
+
+  </div>
+</div>
+
+<footer>
+  <div>© 2025 <span>Coach Anis</span> · @coach__anis</div>
+  <div style="margin-top:6px;opacity:0.4;font-family:'Bebas Neue';letter-spacing:3px;font-size:10px;">SCIENCE · DISCIPLINE · RESULTS</div>
+</footer>
+
+<script>
+let gender = 'male';
+let activityFactor = 1.55;
+let goal = 'maintain';
+
+function setGender(g) {
+  gender = g;
+  document.getElementById('btnMale').classList.toggle('active', g === 'male');
+  document.getElementById('btnFemale').classList.toggle('active', g === 'female');
+}
+
+function setActivity(btn) {
+  document.querySelectorAll('.activity-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activityFactor = parseFloat(btn.dataset.val);
+}
+
+function setGoal(btn) {
+  document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  goal = btn.dataset.goal;
+}
+
+function calculate() {
+  const age = parseFloat(document.getElementById('age').value);
+  const weight = parseFloat(document.getElementById('weight').value);
+  const height = parseFloat(document.getElementById('height').value);
+  const bf = parseFloat(document.getElementById('bf').value);
+
+  if (!age || !weight || !height) {
+    alert('يرجى إدخال العمر، الوزن، والطول على الأقل');
+    return;
+  }
+
+  // BMR — Mifflin-St Jeor or Katch-McArdle if body fat provided
+  let bmr;
+  if (!isNaN(bf) && bf > 0) {
+    const lbm = weight * (1 - bf / 100);
+    bmr = 370 + (21.6 * lbm); // Katch-McArdle
+  } else {
+    if (gender === 'male') {
+      bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+  }
+
+  let tdee = Math.round(bmr * activityFactor);
+
+  // Goal adjustment
+  let targetCals, goalNote;
+  if (goal === 'cut') {
+    targetCals = Math.round(tdee * 0.8);
+    goalNote = `🔥 عجز سعري: ${tdee - targetCals} سعرة (${tdee} TDEE − 20%)`;
+  } else if (goal === 'bulk') {
+    targetCals = Math.round(tdee * 1.1);
+    goalNote = `💪 فائض سعري: ${targetCals - tdee} سعرة (${tdee} TDEE + 10%)`;
+  } else {
+    targetCals = tdee;
+    goalNote = `⚖️ صيانة · TDEE = ${tdee} kcal`;
+  }
+
+  // Macros
+  // Protein: 2g/kg (cut) | 1.8g/kg (maintain) | 2.2g/kg (bulk)
+  const proteinPerKg = goal === 'cut' ? 2.2 : goal === 'bulk' ? 2.0 : 2.0;
+  const proteinG = Math.round(weight * proteinPerKg);
+  const proteinKcal = proteinG * 4;
+
+  // Fat: 25% of total calories
+  const fatKcal = Math.round(targetCals * 0.25);
+  const fatG = Math.round(fatKcal / 9);
+
+  // Carbs: remaining
+  const carbKcal = targetCals - proteinKcal - fatKcal;
+  const carbG = Math.round(carbKcal / 4);
+
+  // Percentages
+  const pP = Math.round((proteinKcal / targetCals) * 100);
+  const pC = Math.round((carbKcal / targetCals) * 100);
+  const pF = Math.round((fatKcal / targetCals) * 100);
+
+  // Update UI
+  document.getElementById('tdeeNum').textContent = targetCals.toLocaleString();
+  document.getElementById('goalNote').textContent = goalNote;
+  document.getElementById('proteinG').textContent = proteinG;
+  document.getElementById('carbG').textContent = carbG;
+  document.getElementById('fatG').textContent = fatG;
+  document.getElementById('proteinKcal').textContent = `${proteinKcal} kcal`;
+  document.getElementById('carbKcal').textContent = `${carbKcal} kcal`;
+  document.getElementById('fatKcal').textContent = `${fatKcal} kcal`;
+  document.getElementById('pctProtein').textContent = `${pP}%`;
+  document.getElementById('pctCarb').textContent = `${pC}%`;
+  document.getElementById('pctFat').textContent = `${pF}%`;
+
+  // Meal split (3 meals: 30% / 40% / 30%)
+  const splits = [
+    { name: 'وجبة الصباح · Breakfast', ratio: 0.30 },
+    { name: 'وجبة الغداء · Lunch', ratio: 0.40 },
+    { name: 'وجبة العشاء · Dinner', ratio: 0.30 },
+  ];
+
+  document.getElementById('mealRows').innerHTML = splits.map(s => `
+    <div class="meal-row">
+      <div class="meal-name">${s.name}</div>
+      <div class="meal-macros">
+        <span class="meal-p">P: ${Math.round(proteinG * s.ratio)}g</span>
+        <span class="meal-c">C: ${Math.round(carbG * s.ratio)}g</span>
+        <span class="meal-f">F: ${Math.round(fatG * s.ratio)}g</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Draw donut
+  drawDonut(pP, pC, pF);
+
+  // Show results
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function drawDonut(pP, pC, pF) {
+  const canvas = document.getElementById('donutChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 110; canvas.height = 110;
+
+  const cx = 55, cy = 55, r = 42, lineW = 14;
+  const colors = ['#E8C97A', '#7AB8E8', '#E87A7A'];
+  const values = [pP, pC, pF];
+  let startAngle = -Math.PI / 2;
+
+  ctx.clearRect(0, 0, 110, 110);
+
+  values.forEach((val, i) => {
+    const slice = (val / 100) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, startAngle, startAngle + slice);
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = lineW;
+    ctx.lineCap = 'butt';
+    ctx.stroke();
+    startAngle += slice;
+  });
+
+  // Center text
+  ctx.fillStyle = '#E8C97A';
+  ctx.font = 'bold 16px Bebas Neue, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('MACRO', cx, cy - 8);
+  ctx.fillStyle = '#777';
+  ctx.font = '10px Cairo, sans-serif';
+  ctx.fillText('توزيع', cx, cy + 10);
+}
+
+function resetCalc() {
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('formCard').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
