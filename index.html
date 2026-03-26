@@ -2,13 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="حاسبة سعرات وماكروز احترافية مع Coach Anis">
-  <meta property="og:title" content="Macro Calculator | Coach Anis">
-  <meta property="og:description" content="احسب احتياجك اليومي بدقة وابدأ رحلة التغيير مع كوتش أنيس">
-  <meta property="og:image" content="https://coach-anis.github.io/NUTRITION-CALCULATOR/coach-anis.png">
-  <meta property="og:url" content="https://coach-anis.github.io/NUTRITION-CALCULATOR/">
-  <meta property="og:type" content="website">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Macro Calculator | Coach Anis</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
@@ -275,6 +269,115 @@ input[type="number"]:focus {
 .goal-icon { font-size: 22px; display: block; margin-bottom: 8px; }
 .goal-name { font-size: 13px; font-weight: 700; display: block; }
 .goal-en { font-size: 9px; letter-spacing: 2px; font-family: 'Bebas Neue', sans-serif; opacity: 0.5; margin-top: 3px; display: block; }
+
+/* ─── MEAL COUNT SELECTOR ─── */
+.meals-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.meal-count-btn {
+  flex: 1;
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 12px 6px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.meal-count-btn:hover { border-color: var(--gold); color: var(--text); }
+.meal-count-btn.active {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.08);
+  color: var(--gold);
+}
+
+/* ─── BMI + WATER CARD ─── */
+.bmi-water-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.bmi-box, .water-box {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.bmi-box::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gold);
+}
+
+.water-box::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: #7AB8E8;
+}
+
+.stat-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+
+.stat-num {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.bmi-box .stat-num { color: var(--gold); }
+.water-box .stat-num { color: #7AB8E8; }
+
+.stat-unit { font-size: 11px; color: var(--dim); }
+.stat-name { font-size: 13px; font-weight: 700; margin-top: 8px; }
+.stat-en { font-size: 9px; letter-spacing: 2px; font-family: "Bebas Neue", sans-serif; color: var(--dim); opacity: 0.6; }
+.bmi-cat {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+/* ─── SHARE BUTTON ─── */
+.btn-share {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  border-radius: 8px;
+  padding: 13px;
+  font-family: "Cairo", sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.btn-share:hover { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+
+.share-toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--dark3); border: 1px solid var(--gold);
+  color: var(--gold); font-family: "Cairo", sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 12px 24px; border-radius: 30px;
+  opacity: 0; transition: all 0.3s; z-index: 9999;
+  white-space: nowrap;
+}
+.share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ─── CALCULATE BTN ─── */
 .btn-calc {
@@ -590,7 +693,7 @@ footer span { color: var(--gold); }
 <div class="header">
   <div class="header-tag">NUTRITION CALCULATOR · حاسبة التغذية</div>
   <h1>MACRO<br><span>CALCULATOR</span></h1>
-  <p>احسب سعراتك وماكروزك اليومي بدقة علمية<br>
+  <p>احسب سعراتك وماكروك اليومي بدقة علمية<br>
   <span style="font-family:'Bebas Neue';letter-spacing:2px;font-size:11px;opacity:0.5;">BY COACH ANIS</span></p>
 </div>
 
@@ -680,9 +783,20 @@ footer span { color: var(--gold); }
       </button>
       <button class="goal-btn" data-goal="bulk" onclick="setGoal(this)">
         <span class="goal-icon">💪</span>
-        <span class="goal-name">تضخيم</span>
+        <span class="goal-name">تضخم</span>
         <span class="goal-en">BULK</span>
       </button>
+    </div>
+
+    <!-- MEALS COUNT -->
+    <div class="step-label" style="margin-top:20px;">STEP 05 · الخطوة الخامسة</div>
+    <div class="step-title">عدد الوجبات · Meals Per Day</div>
+    <div class="meals-selector" id="mealSelector">
+      <button class="meal-count-btn" data-meals="2" onclick="setMealCount(this)">2</button>
+      <button class="meal-count-btn" data-meals="3" onclick="setMealCount(this)">3</button>
+      <button class="meal-count-btn active" data-meals="4" onclick="setMealCount(this)">4</button>
+      <button class="meal-count-btn" data-meals="5" onclick="setMealCount(this)">5</button>
+      <button class="meal-count-btn" data-meals="6" onclick="setMealCount(this)">6</button>
     </div>
 
     <button class="btn-calc" onclick="calculate()">احسب الماكرو · Calculate</button>
@@ -732,6 +846,25 @@ footer span { color: var(--gold); }
       </div>
     </div>
 
+    <!-- BMI + WATER -->
+    <div class="bmi-water-grid">
+      <div class="bmi-box">
+        <span class="stat-icon">📊</span>
+        <div class="stat-num" id="bmiNum">—</div>
+        <div class="stat-unit">kg/m²</div>
+        <div class="stat-name">مؤشر كتلة الجسم</div>
+        <div class="stat-en">BMI</div>
+        <div class="bmi-cat" id="bmiCat"></div>
+      </div>
+      <div class="water-box">
+        <span class="stat-icon">💧</span>
+        <div class="stat-num" id="waterNum">—</div>
+        <div class="stat-unit">لتر / يوم</div>
+        <div class="stat-name">الماء اليومي</div>
+        <div class="stat-en">DAILY WATER</div>
+      </div>
+    </div>
+
     <!-- DONUT -->
     <div class="chart-wrap">
       <canvas id="donutChart" width="110" height="110"></canvas>
@@ -762,19 +895,21 @@ footer span { color: var(--gold); }
 
     <!-- MEAL SPLIT -->
     <div class="meals-card">
-      <div class="meals-title">توزيع الوجبات (3 وجبات) <span>MEAL SPLIT</span></div>
+      <div class="meals-title" id="mealSplitTitle">توزيع الوجبات <span>MEAL SPLIT</span></div>
       <div id="mealRows"></div>
     </div>
 
     <!-- CTA -->
     <div class="cta-box">
-      <p>هذه الأرقام تقديرية — للحصول على <strong>خطة مخصصة 100%</strong> مع متابعة أسبوعية، تابعني على الإنستغرام @coach__anis مباشرة</p>
-      <a class="btn-wa" href="https://instagram.com/coach__anis" target="_blank">
-       start coaching now
+      <p>هذه الأرقام تقديرية — للحصول على <strong>خطة مخصصة 100%</strong> مع متابعة أسبوعية، تواصل مع Coach Anis مباشرة</p>
+      <a class="btn-wa" href="https://www.instagram.com/coach__anis?igsh=am5jbXo5ZGJwb2F4" target="_blank">
+        📸 تابع Coach Anis على إنستغرام
       </a>
     </div>
 
+    <button class="btn-share" onclick="shareResults()">📋 نسخ النتائج للمشاركة</button>
     <button class="btn-reset" onclick="resetCalc()">🔄 حساب جديد · Recalculate</button>
+    <div class="share-toast" id="shareToast">✅ تم نسخ النتائج!</div>
 
   </div>
 </div>
@@ -788,6 +923,8 @@ footer span { color: var(--gold); }
 let gender = 'male';
 let activityFactor = 1.55;
 let goal = 'maintain';
+let mealCount = 4;
+let lastResults = {};
 
 function setGender(g) {
   gender = g;
@@ -807,6 +944,12 @@ function setGoal(btn) {
   goal = btn.dataset.goal;
 }
 
+function setMealCount(btn) {
+  document.querySelectorAll('.meal-count-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  mealCount = parseInt(btn.dataset.meals);
+}
+
 function calculate() {
   const age = parseFloat(document.getElementById('age').value);
   const weight = parseFloat(document.getElementById('weight').value);
@@ -818,11 +961,11 @@ function calculate() {
     return;
   }
 
-  // BMR — Mifflin-St Jeor or Katch-McArdle if body fat provided
+  // BMR
   let bmr;
   if (!isNaN(bf) && bf > 0) {
     const lbm = weight * (1 - bf / 100);
-    bmr = 370 + (21.6 * lbm); // Katch-McArdle
+    bmr = 370 + (21.6 * lbm);
   } else {
     if (gender === 'male') {
       bmr = 10 * weight + 6.25 * height - 5 * age + 5;
@@ -833,7 +976,7 @@ function calculate() {
 
   let tdee = Math.round(bmr * activityFactor);
 
-  // Goal adjustment
+  // Goal
   let targetCals, goalNote;
   if (goal === 'cut') {
     targetCals = Math.round(tdee * 0.8);
@@ -847,23 +990,27 @@ function calculate() {
   }
 
   // Macros
-  // Protein: 2g/kg (cut) | 1.8g/kg (maintain) | 2.2g/kg (bulk)
-  const proteinPerKg = goal === 'cut' ? 2.2 : goal === 'bulk' ? 2.0 : 2.0;
+  const proteinPerKg = goal === 'cut' ? 2.2 : 2.0;
   const proteinG = Math.round(weight * proteinPerKg);
   const proteinKcal = proteinG * 4;
-
-  // Fat: 25% of total calories
   const fatKcal = Math.round(targetCals * 0.25);
   const fatG = Math.round(fatKcal / 9);
-
-  // Carbs: remaining
   const carbKcal = targetCals - proteinKcal - fatKcal;
   const carbG = Math.round(carbKcal / 4);
-
-  // Percentages
   const pP = Math.round((proteinKcal / targetCals) * 100);
   const pC = Math.round((carbKcal / targetCals) * 100);
   const pF = Math.round((fatKcal / targetCals) * 100);
+
+  // BMI
+  const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+  let bmiLabel, bmiColor;
+  if (bmi < 18.5) { bmiLabel = 'نقص وزن'; bmiColor = '#7AB8E8'; }
+  else if (bmi < 25) { bmiLabel = 'وزن مثالي ✓'; bmiColor = '#2DC653'; }
+  else if (bmi < 30) { bmiLabel = 'زيادة وزن'; bmiColor = '#E8C97A'; }
+  else { bmiLabel = 'سمنة'; bmiColor = '#E87A7A'; }
+
+  // Water (35ml/kg, +500ml if active)
+  const waterL = ((weight * 35 + (activityFactor > 1.4 ? 500 : 0)) / 1000).toFixed(1);
 
   // Update UI
   document.getElementById('tdeeNum').textContent = targetCals.toLocaleString();
@@ -878,28 +1025,48 @@ function calculate() {
   document.getElementById('pctCarb').textContent = `${pC}%`;
   document.getElementById('pctFat').textContent = `${pF}%`;
 
-  // Meal split (3 meals: 30% / 40% / 30%)
-  const splits = [
-    { name: 'وجبة الصباح · Breakfast', ratio: 0.30 },
-    { name: 'وجبة الغداء · Lunch', ratio: 0.40 },
-    { name: 'وجبة العشاء · Dinner', ratio: 0.30 },
-  ];
+  // BMI + Water
+  document.getElementById('bmiNum').textContent = bmi;
+  document.getElementById('bmiCat').textContent = bmiLabel;
+  document.getElementById('bmiCat').style.cssText = `background:${bmiColor}22;color:${bmiColor};`;
+  document.getElementById('waterNum').textContent = waterL;
 
-  document.getElementById('mealRows').innerHTML = splits.map(s => `
+  // Dynamic meal split
+  const mealNames = {
+    2: ['وجبة الصباح · Breakfast','وجبة العشاء · Dinner'],
+    3: ['وجبة الصباح · Breakfast','وجبة الغداء · Lunch','وجبة العشاء · Dinner'],
+    4: ['وجبة الصباح · Breakfast','وجبة منتصف النهار · Snack','وجبة الغداء · Lunch','وجبة العشاء · Dinner'],
+    5: ['الفطور · Breakfast','وجبة خفيفة · Snack 1','الغداء · Lunch','وجبة خفيفة · Snack 2','العشاء · Dinner'],
+    6: ['الفطور','وجبة 2','الغداء','وجبة 4','العشاء','وجبة 6'],
+  };
+  const mealRatios = {
+    2: [0.45, 0.55],
+    3: [0.30, 0.40, 0.30],
+    4: [0.25, 0.15, 0.35, 0.25],
+    5: [0.25, 0.10, 0.30, 0.10, 0.25],
+    6: [0.20, 0.10, 0.25, 0.10, 0.25, 0.10],
+  };
+
+  const names = mealNames[mealCount];
+  const ratios = mealRatios[mealCount];
+  document.getElementById('mealSplitTitle').innerHTML = `توزيع الوجبات (${mealCount} وجبات) <span>MEAL SPLIT</span>`;
+  document.getElementById('mealRows').innerHTML = names.map((name, i) => `
     <div class="meal-row">
-      <div class="meal-name">${s.name}</div>
+      <div class="meal-name">${name}</div>
       <div class="meal-macros">
-        <span class="meal-p">P: ${Math.round(proteinG * s.ratio)}g</span>
-        <span class="meal-c">C: ${Math.round(carbG * s.ratio)}g</span>
-        <span class="meal-f">F: ${Math.round(fatG * s.ratio)}g</span>
+        <span class="meal-p">P: ${Math.round(proteinG * ratios[i])}g</span>
+        <span class="meal-c">C: ${Math.round(carbG * ratios[i])}g</span>
+        <span class="meal-f">F: ${Math.round(fatG * ratios[i])}g</span>
+        <span style="color:var(--dim);font-size:11px">${Math.round(targetCals * ratios[i])} kcal</span>
       </div>
     </div>
   `).join('');
 
-  // Draw donut
   drawDonut(pP, pC, pF);
 
-  // Show results
+  // Save for share
+  lastResults = { targetCals, proteinG, carbG, fatG, bmi, bmiLabel, waterL, goal, mealCount };
+
   document.getElementById('formCard').style.display = 'none';
   document.getElementById('resultsSection').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -909,14 +1076,11 @@ function drawDonut(pP, pC, pF) {
   const canvas = document.getElementById('donutChart');
   const ctx = canvas.getContext('2d');
   canvas.width = 110; canvas.height = 110;
-
   const cx = 55, cy = 55, r = 42, lineW = 14;
   const colors = ['#E8C97A', '#7AB8E8', '#E87A7A'];
   const values = [pP, pC, pF];
   let startAngle = -Math.PI / 2;
-
   ctx.clearRect(0, 0, 110, 110);
-
   values.forEach((val, i) => {
     const slice = (val / 100) * 2 * Math.PI;
     ctx.beginPath();
@@ -927,8 +1091,6 @@ function drawDonut(pP, pC, pF) {
     ctx.stroke();
     startAngle += slice;
   });
-
-  // Center text
   ctx.fillStyle = '#E8C97A';
   ctx.font = 'bold 16px Bebas Neue, sans-serif';
   ctx.textAlign = 'center';
@@ -937,6 +1099,40 @@ function drawDonut(pP, pC, pF) {
   ctx.fillStyle = '#777';
   ctx.font = '10px Cairo, sans-serif';
   ctx.fillText('توزيع', cx, cy + 10);
+}
+
+function shareResults() {
+  const r = lastResults;
+  const goalAr = r.goal === 'cut' ? 'تنشيف' : r.goal === 'bulk' ? 'تضخم' : 'ثبات';
+  const text = `📊 نتائج الماكرو - Coach Anis
+━━━━━━━━━━━━━━
+🔥 السعرات اليومية: ${r.targetCals.toLocaleString()} kcal
+🎯 الهدف: ${goalAr}
+━━━━━━━━━━━━━━
+🥩 بروتين: ${r.proteinG}g
+🍚 كاربوهيدرات: ${r.carbG}g
+🥑 دهون: ${r.fatG}g
+━━━━━━━━━━━━━━
+📊 BMI: ${r.bmi} (${r.bmiLabel})
+💧 الماء اليومي: ${r.waterL}L
+━━━━━━━━━━━━━━
+by @coach__anis`;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast());
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  }
+}
+
+function showToast() {
+  const t = document.getElementById('shareToast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 function resetCalc() {
